@@ -9,9 +9,6 @@ namespace Frog_Feed_Order
 		[SerializeField] private Cell cell;
 		[SerializeField] private Grape grape;
 
-		/// <summary>
-		/// Awake is called when the script instance is being loaded.
-		/// </summary>
 		void Awake()
 		{
 			RandomizeColor();

@@ -6,10 +6,10 @@ namespace Frog_Feed_Order
 {
 	public class Grape : MonoBehaviour
 	{
+		[Header("Color Variables")]
 		[SerializeField] private MeshRenderer meshRenderer;
 		[SerializeField] private List<Material> materials = new List<Material>();
-
-		private Colors chosenColor;
+		[SerializeField] private Colors chosenColor;
 
 		/// <summary>
 		/// Sets the color of the grape
