@@ -6,6 +6,12 @@ namespace Frog_Feed_Order
 {
 	public class LevelManager : MonoBehaviour
 	{
-		[SerializeField] private Node nodePrefab;
+		[SerializeField] private CameraController cameraController;
+		[SerializeField] private Grid grid;
+
+		void Start()
+		{
+			cameraController.ArrangeCamera(grid.GetNodeTransforms());
+		}
 	}
 }
