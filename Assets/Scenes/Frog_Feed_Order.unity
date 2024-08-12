@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb46524093e536b46a09ba6f2e6b6e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraController: {fileID: 330585548}
   grid: {fileID: 539381844}
 --- !u!1 &330585543
 GameObject:
@@ -492,7 +493,6 @@ MonoBehaviour:
   spaceBetweenRows: 1
   spaceBetweenColumns: -1
   nodes: []
-  nodesTransforms: []
 --- !u!1 &668794839
 GameObject:
   m_ObjectHideFlags: 0
