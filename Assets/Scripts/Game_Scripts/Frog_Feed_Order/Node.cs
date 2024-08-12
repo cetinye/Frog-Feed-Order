@@ -25,6 +25,8 @@ namespace Frog_Feed_Order
 		{
 			rowIndex = row;
 			columnIndex = column;
+
+			gameObject.name = $"Node ({rowIndex}, {columnIndex})";
 		}
 
 		/// <summary>
