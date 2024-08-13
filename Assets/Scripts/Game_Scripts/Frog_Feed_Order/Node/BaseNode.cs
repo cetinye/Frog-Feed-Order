@@ -4,17 +4,18 @@ using UnityEngine;
 
 namespace Frog_Feed_Order
 {
-	public class Node : MonoBehaviour
+	public class BaseNode : MonoBehaviour
 	{
-		[SerializeField] private Cell cell;
-		[SerializeField] private Grape grape;
-		[SerializeField] private int rowIndex;
-		[SerializeField] private int columnIndex;
+		public Cell cell;
 
-		void Awake()
-		{
-			RandomizeColor();
-		}
+		[Header("Index Variables")]
+		public int rowIndex;
+		public int columnIndex;
+
+		[Header("Color Variables")]
+		public Colors chosenColor;
+		public Renderer meshRenderer;
+		public List<Material> materials = new List<Material>();
 
 		/// <summary>
 		/// Set the index of the node
@@ -30,6 +31,19 @@ namespace Frog_Feed_Order
 		}
 
 		/// <summary>
+		/// Sets the color of the grape
+		/// </summary>
+		/// <param name="color"></param>
+		public void SetColor(Colors color)
+		{
+			chosenColor = color;
+
+			Material[] rendererMaterials = meshRenderer.materials;
+			rendererMaterials[0] = Instantiate(materials[(int)color]);
+			meshRenderer.materials = rendererMaterials;
+		}
+
+		/// <summary>
 		/// Randomize the color of the nodes cell and grape
 		/// </summary>
 		public void RandomizeColor()
@@ -37,7 +51,7 @@ namespace Frog_Feed_Order
 			Colors randomColor = (Colors)Random.Range(0, System.Enum.GetNames(typeof(Colors)).Length);
 
 			cell.SetColor(randomColor);
-			grape.SetColor(randomColor);
+			SetColor(randomColor);
 		}
 	}
 
@@ -49,5 +63,4 @@ namespace Frog_Feed_Order
 		Red = 3,
 		Yellow = 4
 	}
-
 }

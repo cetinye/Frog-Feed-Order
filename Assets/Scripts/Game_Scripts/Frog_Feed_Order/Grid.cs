@@ -7,7 +7,7 @@ namespace Frog_Feed_Order
 	public class Grid : MonoBehaviour
 	{
 		[Header("Grid Variables")]
-		[SerializeField] private Node nodePrefab;
+		[SerializeField] private BaseNode nodePrefab;
 		[SerializeField] private int rowSize;
 		[SerializeField] private int columnSize;
 		[SerializeField] private float startRowPos;
@@ -16,7 +16,7 @@ namespace Frog_Feed_Order
 		[SerializeField] private float spaceBetweenColumns;
 
 		[Header("Node Variables")]
-		[SerializeField] private List<Node> nodes = new List<Node>();
+		[SerializeField] private List<BaseNode> nodes = new List<BaseNode>();
 		private List<Transform> nodesTransforms = new List<Transform>();
 
 		void Awake()
@@ -38,7 +38,7 @@ namespace Frog_Feed_Order
 			{
 				for (int columnIndex = 0; columnIndex < columns; columnIndex++)
 				{
-					Node node = Instantiate(nodePrefab, transform);
+					BaseNode node = Instantiate(nodePrefab, transform);
 					node.transform.position = new Vector3(posRow, 0, posColumn);
 
 					node.SetIndex(rowIndex, columnIndex);
