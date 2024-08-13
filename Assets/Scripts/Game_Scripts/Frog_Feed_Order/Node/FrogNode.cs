@@ -4,11 +4,16 @@ using UnityEngine;
 
 namespace Frog_Feed_Order
 {
-	public class FrogNode : BaseNode
+	public class FrogNode : BaseNode, IClickable
 	{
 		void Awake()
 		{
 			RandomizeColor();
+		}
+
+		public void Clicked()
+		{
+			Debug.Log("Clicked Frog (" + rowIndex + ", " + columnIndex + ")");
 		}
 	}
 }
