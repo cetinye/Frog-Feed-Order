@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Frog_Feed_Order
 {
-	public class Grape : BaseNode
+	public class GrapeNode : BaseNode
 	{
 		void Awake()
 		{
