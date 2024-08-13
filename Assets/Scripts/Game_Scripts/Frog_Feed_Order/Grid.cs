@@ -1,15 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Frog_Feed_Order
 {
 	public class Grid : MonoBehaviour
 	{
+		public int levelId;
+
+		[Header("JSON")]
+		[SerializeField] private TextAsset levelDatasJSON;
+		[SerializeField] private LevelDatas levelDatas;
+		[SerializeField] private LevelData level;
+
 		[Header("Grid Variables")]
-		[SerializeField] private BaseNode nodePrefab;
-		[SerializeField] private int rowSize;
-		[SerializeField] private int columnSize;
+		[SerializeField] private GrapeNode grapeNodePrefab;
+		[SerializeField] private ArrowNode arrowNodePrefab;
+		[SerializeField] private FrogNode frogNodePrefab;
+		private int rowSize;
+		private int columnSize;
 		[SerializeField] private float startRowPos;
 		[SerializeField] private float startColumnPos;
 		[SerializeField] private float spaceBetweenRows;
@@ -21,7 +32,18 @@ namespace Frog_Feed_Order
 
 		void Awake()
 		{
+			ReadJSON();
 			FillGrid(rowSize, columnSize);
+		}
+
+		private void ReadJSON()
+		{
+			levelDatas = JsonUtility.FromJson<LevelDatas>(levelDatasJSON.text);
+
+			level = levelDatas.levelData[levelId];
+
+			rowSize = level.gridSize[0];
+			columnSize = level.gridSize[1];
 		}
 
 		/// <summary>
@@ -31,6 +53,8 @@ namespace Frog_Feed_Order
 		/// <param name="columns"></param>
 		private void FillGrid(int rows, int columns)
 		{
+			int gridDataReadIndex = 0;
+
 			float posRow = startRowPos;
 			float posColumn = startColumnPos;
 
@@ -38,12 +62,30 @@ namespace Frog_Feed_Order
 			{
 				for (int columnIndex = 0; columnIndex < columns; columnIndex++)
 				{
-					BaseNode node = Instantiate(nodePrefab, transform);
-					node.transform.position = new Vector3(posRow, 0, posColumn);
+					BaseNode node = null;
 
+					switch (level.gridData[gridDataReadIndex])
+					{
+						case 1:
+							node = Instantiate(grapeNodePrefab, transform);
+							break;
+						case 2:
+							node = Instantiate(arrowNodePrefab, transform);
+							break;
+						case 3:
+							node = Instantiate(frogNodePrefab, transform);
+							break;
+						default:
+							Debug.Log("Invalid grid data: " + level.gridData[gridDataReadIndex]);
+							break;
+					}
+
+					node.transform.position = new Vector3(posRow, 0, posColumn);
 					node.SetIndex(rowIndex, columnIndex);
 					nodes.Add(node);
 					nodesTransforms.Add(node.transform);
+
+					gridDataReadIndex++;
 
 					posRow += spaceBetweenRows;
 				}
@@ -61,5 +103,19 @@ namespace Frog_Feed_Order
 		{
 			return nodesTransforms;
 		}
+	}
+
+	[Serializable]
+	public class LevelDatas
+	{
+		public LevelData[] levelData;
+	}
+
+	[Serializable]
+	public class LevelData
+	{
+		public int levelId;
+		public int[] gridSize;
+		public int[] gridData;
 	}
 }

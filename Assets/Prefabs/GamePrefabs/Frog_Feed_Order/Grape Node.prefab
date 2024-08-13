@@ -98,11 +98,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5539b13313a07ef4a97f3e6ec523d6ec,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8821204420736389312}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5539b13313a07ef4a97f3e6ec523d6ec, type: 3}
 --- !u!4 &29113821908098136 stripped
 Transform:
@@ -110,30 +106,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 571349812530625459}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &805227828052395746 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5539b13313a07ef4a97f3e6ec523d6ec,
-    type: 3}
-  m_PrefabInstance: {fileID: 571349812530625459}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &8821204420736389312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 805227828052395746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f83a49beb6903cf48b515526838dc7be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cell: {fileID: 0}
-  rowIndex: 0
-  columnIndex: 0
-  chosenColor: 0
-  meshRenderer: {fileID: 0}
-  materials: []
 --- !u!23 &1165378976869066551 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 5539b13313a07ef4a97f3e6ec523d6ec,
