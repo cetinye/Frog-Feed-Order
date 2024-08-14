@@ -66,15 +66,40 @@ namespace Frog_Feed_Order
 
 					switch (level.gridData[gridDataReadIndex])
 					{
-						case 1:
+						// Grape
+						case "G":
 							node = Instantiate(grapeNodePrefab, transform);
 							break;
-						case 2:
+
+						// Arrow
+						case "A":
 							node = Instantiate(arrowNodePrefab, transform);
 							break;
-						case 3:
+
+						// Frog Facing UP
+						case "FU":
 							node = Instantiate(frogNodePrefab, transform);
+							((FrogNode)node).SetFacingDirection(FacingDirection.Up);
 							break;
+
+						// Frog Facing DOWN
+						case "FD":
+							node = Instantiate(frogNodePrefab, transform);
+							((FrogNode)node).SetFacingDirection(FacingDirection.Down);
+							break;
+
+						// Frog Facing LEFT
+						case "FL":
+							node = Instantiate(frogNodePrefab, transform);
+							((FrogNode)node).SetFacingDirection(FacingDirection.Left);
+							break;
+
+						// Frog Facing RIGHT
+						case "FR":
+							node = Instantiate(frogNodePrefab, transform);
+							((FrogNode)node).SetFacingDirection(FacingDirection.Right);
+							break;
+
 						default:
 							Debug.Log("Invalid grid data: " + level.gridData[gridDataReadIndex]);
 							break;
@@ -103,6 +128,11 @@ namespace Frog_Feed_Order
 		{
 			return nodesTransforms;
 		}
+
+		public BaseNode GetBaseNode(int rowIndex, int columnIndex)
+		{
+			return nodes.Find(node => node.rowIndex == rowIndex && node.columnIndex == columnIndex);
+		}
 	}
 
 	[Serializable]
@@ -116,6 +146,12 @@ namespace Frog_Feed_Order
 	{
 		public int levelId;
 		public int[] gridSize;
-		public int[] gridData;
+		public string[] gridData;
+	}
+
+	public enum TableDirection
+	{
+		Row = 0,
+		Column = 1
 	}
 }

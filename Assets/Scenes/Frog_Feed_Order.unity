@@ -529,14 +529,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9dd11fbfd180ad4eb34c73f660bd198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelId: 0
+  levelId: 2
   levelDatasJSON: {fileID: 4900000, guid: 08d2d0d24d7872d459fb9cc5d2128837, type: 3}
   levelDatas:
     levelData: []
   level:
     levelId: 0
     gridSize: 
-    gridData: 
+    gridData: []
   grapeNodePrefab: {fileID: 4438099679623357248, guid: 01f631da5d05a6445927456de57c067f,
     type: 3}
   arrowNodePrefab: {fileID: -4604646628200403692, guid: e06c30f598a3e6b46813cba9dbeda2d1,
