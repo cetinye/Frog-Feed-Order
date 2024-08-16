@@ -7,17 +7,10 @@ namespace Frog_Feed_Order
 {
 	public class CameraController : MonoBehaviour
 	{
-		public static CameraController Instance { get; private set; }
-
 		[SerializeField] private Camera mainCamera;
 		[SerializeField] private Vector3 camPosOffset;
 		[SerializeField] private Vector3 camRotation;
 		private List<Transform> targets;
-
-		void Awake()
-		{
-			Instance = this;
-		}
 
 		/// <summary>
 		/// Arrange the camera in the middle of the given transforms
@@ -33,7 +26,7 @@ namespace Frog_Feed_Order
 		/// Calculate the middle point of the given transforms
 		/// </summary>
 		/// <param name="targets"></param>
-		/// <returns></returns>
+		/// <returns> middle point Vector3</returns>
 		private Vector3 CalculateMiddlePoint(List<Transform> targets)
 		{
 			Vector3 sumOfPositions = Vector3.zero;

@@ -235,3 +235,5 @@ MonoBehaviour:
   - {fileID: 2100000, guid: b7d3223ef0efa0d42bffd5cecafcb791, type: 2}
   - {fileID: 2100000, guid: 44e0ae1e4ffa079488a037186ee4e951, type: 2}
   - {fileID: 2100000, guid: 671c7a0d56760ab4d95a2f05bfc5cd76, type: 2}
+  scaleTo: {x: 1.2, y: 1.2, z: 1.2}
+  timeToScale: 0.2

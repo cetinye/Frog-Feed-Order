@@ -8,11 +8,17 @@ namespace Frog_Feed_Order
 	{
 		[SerializeField] private Camera raycastCamera;
 
+		/// <summary>
+		/// Listen for inputs
+		/// </summary>
 		void Update()
 		{
 			CheckTap();
 		}
 
+		/// <summary>
+		/// Perform action if user tapped on an clickable object
+		/// </summary>
 		private void CheckTap()
 		{
 			if (Input.GetMouseButtonDown(1))

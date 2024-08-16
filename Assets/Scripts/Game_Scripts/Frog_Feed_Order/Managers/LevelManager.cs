@@ -21,9 +21,15 @@ namespace Frog_Feed_Order
 			cameraController.ArrangeCamera(grid.GetNodeTransforms());
 		}
 
-		public BaseNode GetBaseNode(int rowIndex, int columnIndex)
+		/// <summary>
+		/// Get the path from the startNode until the end and return it as an array
+		/// </summary>
+		/// <param name="startNode"></param>
+		/// <param name="direction"></param>
+		/// <returns>Array of transforms along the path</returns>
+		public Transform[] GetPath(BaseNode startNode, FacingDirection direction)
 		{
-			return grid.GetBaseNode(rowIndex, columnIndex);
+			return grid.GetPath(startNode.rowIndex, startNode.columnIndex, direction).ToArray();
 		}
 	}
 }

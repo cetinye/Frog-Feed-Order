@@ -7,67 +7,79 @@ namespace Frog_Feed_Order
 	public class LineController : MonoBehaviour
 	{
 		[SerializeField] private LineRenderer lineRenderer;
-		[SerializeField] private Color lineColor;
-		[SerializeField] private float lineWidth;
+		[SerializeField] private float lineHeight;
+		[SerializeField] private float tongueMoveInterval;
 		private Transform[] positions;
+		private Transform[] tempPath;
 
-		void Awake()
+		/// <summary>
+		/// Assigns the calculated path to the line
+		/// </summary>
+		/// <param name="calculatedPath"></param>
+		public void AssignPathToLine(Transform[] calculatedPath)
 		{
-			// Set up the LineRenderer with initial position
-			positions = new Transform[1];
-			GameObject newGameObject = new GameObject();
-			newGameObject.transform.localPosition = new Vector3(0, 0.2f, 0);
-			positions[0] = newGameObject.transform;
-			SetUpLineRenderer(positions);
+			// Create array of transforms
+			positions = new Transform[calculatedPath.Length];
+			this.positions = calculatedPath;
+
+			StartCoroutine(ExtendTongue());
 		}
 
 		/// <summary>
-		/// Set up the LineRenderer points
+		/// Routine to extend tongue through the path
 		/// </summary>
-		/// <param name="positions"></param>
-		public void SetUpLineRenderer(Transform[] positions)
+		/// <returns></returns>
+		IEnumerator ExtendTongue()
 		{
-			lineRenderer.positionCount = positions.Length;
-			this.positions = positions;
-		}
-
-		/// <summary>
-		/// Add a new node to the line
-		/// </summary>
-		public void AddNodeToLine()
-		{
-			// Create new game object to use its transform
-			GameObject newGameObject = new GameObject();
-			newGameObject.transform.SetParent(transform);
-
-			// Assign new position to last tongue positions forward
-			newGameObject.transform.localPosition = new Vector3(0, 0.2f, positions[^1].transform.localPosition.z - 1);
-
-			// Create new Transform array and add new position
-			Transform[] newPositions = new Transform[positions.Length + 1];
 			for (int i = 0; i < positions.Length; i++)
 			{
-				newPositions[i] = positions[i];
+				// Create a new spot for the next node
+				tempPath = new Transform[i + 1];
+				lineRenderer.positionCount = tempPath.Length;
+
+				// Assign path position to line
+				tempPath[i] = positions[i];
+
+				StartCoroutine(LerpPosition(tempPath[i].position, tongueMoveInterval, i));
+				yield return new WaitForSeconds(tongueMoveInterval);
+
+				// Invoke node visited action
+				positions[i].GetComponent<BaseNode>().OnVisit?.Invoke();
 			}
-			newPositions[^1] = newGameObject.transform;
 
-			// Assign new positions to LineRenderer
-			SetUpLineRenderer(newPositions);
-
-			DrawLine();
+			// Clear line
+			positions = null;
+			lineRenderer.positionCount = 0;
 		}
 
 		/// <summary>
-		/// Draw the line
+		/// Lerps the position of the line for smooth tongue extension
 		/// </summary>
-		private void DrawLine()
+		/// <param name="targetPosition"></param>
+		/// <param name="duration"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		IEnumerator LerpPosition(Vector3 targetPosition, float duration, int index)
 		{
-			if (positions == null || positions.Length == 0) return;
+			float time = 0;
+			Vector3 startPosition;
+			Vector3 lerpedVector;
 
-			for (int i = 0; i < positions.Length; i++)
+			if (index == 0)
+				startPosition = transform.position;
+			else
+				startPosition = positions[index - 1].position;
+
+			while (time < duration)
 			{
-				lineRenderer.SetPosition(i, positions[i].localPosition);
+				lerpedVector = Vector3.Lerp(startPosition, targetPosition, time / duration);
+				lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
+				time += Time.deltaTime;
+				yield return null;
 			}
+
+			lerpedVector = targetPosition;
+			lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
 		}
 	}
 }

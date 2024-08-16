@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace Frog_Feed_Order
 	public class BaseNode : MonoBehaviour
 	{
 		public Cell cell;
+		public Action OnVisit;
 
 		[Header("Index Variables")]
 		public int rowIndex;
@@ -16,6 +18,9 @@ namespace Frog_Feed_Order
 		public Colors chosenColor;
 		public Renderer meshRenderer;
 		public List<Material> materials = new List<Material>();
+
+		[Header("Direction Variable")]
+		public FacingDirection facingDirection;
 
 		/// <summary>
 		/// Set the index of the node
@@ -48,10 +53,57 @@ namespace Frog_Feed_Order
 		/// </summary>
 		public void RandomizeColor()
 		{
-			Colors randomColor = (Colors)Random.Range(0, System.Enum.GetNames(typeof(Colors)).Length);
+			Colors randomColor = (Colors)UnityEngine.Random.Range(0, System.Enum.GetNames(typeof(Colors)).Length);
 
 			cell.SetColor(randomColor);
 			SetColor(randomColor);
+		}
+
+		/// <summary>
+		/// Sets the facing direction of the node
+		/// </summary>
+		/// <param name="direction"></param>
+		public void SetFacingDirection(FacingDirection direction)
+		{
+			switch (direction)
+			{
+				case FacingDirection.Up:
+					facingDirection = FacingDirection.Up;
+					transform.localRotation = Quaternion.Euler(0, 180, 0);
+					break;
+
+				case FacingDirection.Down:
+					facingDirection = FacingDirection.Down;
+					transform.localRotation = Quaternion.Euler(0, 0, 0);
+					break;
+
+				case FacingDirection.Left:
+					facingDirection = FacingDirection.Left;
+					transform.localRotation = Quaternion.Euler(0, 90, 0);
+					break;
+
+				case FacingDirection.Right:
+					facingDirection = FacingDirection.Right;
+					transform.localRotation = Quaternion.Euler(0, -90, 0);
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Gets the facing direction of the node
+		/// </summary>
+		/// <returns>Facing Direction of the node</returns>
+		public FacingDirection GetFacingDirection()
+		{
+			return facingDirection;
+		}
+
+		/// <summary>
+		/// Virtual function for when the different nodes are visited
+		/// </summary>
+		public virtual void OnNodeVisited()
+		{
+
 		}
 	}
 
@@ -62,5 +114,13 @@ namespace Frog_Feed_Order
 		Purple = 2,
 		Red = 3,
 		Yellow = 4
+	}
+
+	public enum FacingDirection
+	{
+		Up = 0,
+		Down = 1,
+		Left = 2,
+		Right = 3
 	}
 }
