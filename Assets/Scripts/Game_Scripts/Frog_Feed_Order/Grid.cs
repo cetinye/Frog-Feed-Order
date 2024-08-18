@@ -155,7 +155,6 @@ namespace Frog_Feed_Order
 				// Traverse the grid until out of bounds
 				while (currentRowIndex >= 0 && currentRowIndex < rowSize && currentColumnIndex >= 0 && currentColumnIndex < columnSize)
 				{
-					Debug.Log(currentRowIndex + " " + currentColumnIndex);
 					GetBaseNode(currentRowIndex, currentColumnIndex).SetColor(frogColor);
 
 					// Move to next index regarding the direction

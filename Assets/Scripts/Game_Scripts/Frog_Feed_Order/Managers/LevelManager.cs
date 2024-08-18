@@ -135,11 +135,13 @@ namespace Frog_Feed_Order
 			return grid.GetPath(startNode.rowIndex, startNode.columnIndex, direction, color).ToArray();
 		}
 
+		/// <summary>
+		/// Check if the level is out of moves
+		/// </summary>
+		/// <returns>a boolean indicating if the level is out of moves</returns>
 		private bool IsOutOfMoves()
 		{
 			return leftMoves < frogCount;
 		}
-
-
 	}
 }

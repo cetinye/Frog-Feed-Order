@@ -9,6 +9,7 @@ namespace Frog_Feed_Order
 	{
 		public Cell cell;
 		public Action OnVisit;
+		public Action<int, float> OnRetract;
 
 		[Header("Index Variables")]
 		public int rowIndex;
@@ -102,6 +103,14 @@ namespace Frog_Feed_Order
 		/// Virtual function for when the different nodes are visited
 		/// </summary>
 		public virtual void OnNodeVisited()
+		{
+
+		}
+
+		/// <summary>
+		/// Virtual function for when the different nodes are retracted
+		/// </summary>
+		public virtual void OnNodeRetracted(int index, float time)
 		{
 
 		}

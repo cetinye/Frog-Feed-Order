@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Frog_Feed_Order
 {
 	public class LineController : MonoBehaviour
 	{
+		[SerializeField] private Transform tongueTr;
 		[SerializeField] private LineRenderer lineRenderer;
 		[SerializeField] private float lineHeight;
 		[SerializeField] private float tongueMoveInterval;
@@ -33,6 +35,9 @@ namespace Frog_Feed_Order
 		/// <returns></returns>
 		IEnumerator ExtendTongue()
 		{
+			List<GrapeNode> visitedNodes = new List<GrapeNode>();
+
+			// Extend Tongue
 			for (int i = 0; i < positions.Length; i++)
 			{
 				// Create a new spot for the next node
@@ -46,7 +51,27 @@ namespace Frog_Feed_Order
 				yield return new WaitForSeconds(tongueMoveInterval);
 
 				// Invoke node visited action
-				positions[i].GetComponent<BaseNode>().OnVisit?.Invoke();
+				if (positions[i].TryGetComponent(out GrapeNode grapeNode))
+				{
+					visitedNodes.Add(grapeNode);
+					grapeNode.OnVisit?.Invoke();
+				}
+			}
+
+			// Retract Tongue
+			for (int i = positions.Length - 1; i >= 0; i--)
+			{
+				StartCoroutine(LerpPosition(positions[i].transform.position, tongueMoveInterval, i));
+				yield return new WaitForSeconds(tongueMoveInterval);
+
+				if (positions[i].TryGetComponent(out GrapeNode grapeNode))
+				{
+					grapeNode.GetItem().transform.SetParent(tongueTr, true);
+					grapeNode.GetItem().position = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z - (positions.Length - i - 1) * 0.5f);
+					grapeNode.OnRetract?.Invoke(i - 1, tongueMoveInterval);
+				}
+
+				lineRenderer.positionCount--;
 			}
 
 			// Clear line
@@ -65,24 +90,23 @@ namespace Frog_Feed_Order
 		IEnumerator LerpPosition(Vector3 targetPosition, float duration, int index)
 		{
 			float time = 0;
-			Vector3 startPosition;
+			Vector3 startPosition = tongueTr.position;
 			Vector3 lerpedVector;
-
-			if (index == 0)
-				startPosition = transform.position;
-			else
-				startPosition = positions[index - 1].position;
 
 			while (time < duration)
 			{
 				lerpedVector = Vector3.Lerp(startPosition, targetPosition, time / duration);
+				tongueTr.position = lerpedVector;
 				lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
 				time += Time.deltaTime;
 				yield return null;
 			}
 
 			lerpedVector = targetPosition;
-			lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
+			tongueTr.position = lerpedVector;
+
+			// if (index >= 0 && index <= lineRenderer.positionCount)
+			// lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
 		}
 	}
 }
