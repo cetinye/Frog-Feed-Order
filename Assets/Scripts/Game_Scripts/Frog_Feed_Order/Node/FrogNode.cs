@@ -8,6 +8,8 @@ namespace Frog_Feed_Order
 	[RequireComponent(typeof(LineRenderer))]
 	public class FrogNode : BaseNode, IClickable
 	{
+		public static Action OnFrogClick;
+
 		private LineController lineController;
 		private LevelManager levelManager;
 
@@ -30,7 +32,13 @@ namespace Frog_Feed_Order
 		{
 			Debug.Log("Clicked Frog (" + rowIndex + ", " + columnIndex + ")");
 
-			lineController.AssignPathToLine(levelManager.GetPath(this, facingDirection));
+			OnFrogClick?.Invoke();
+
+			lineController.AssignPathToLine(levelManager.GetPath(this, facingDirection, chosenColor));
+
+			// TODO: IF SUCCESSFUL, REMOVE FROG, DECREMENT FROG COUNT
+
+			// levelManager.CheckLevelEnd();
 		}
 	}
 }

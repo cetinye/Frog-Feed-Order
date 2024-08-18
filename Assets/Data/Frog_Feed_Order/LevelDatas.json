@@ -3,6 +3,7 @@
 	[
 		{
 			"levelId": 0,
+			"moves": 20,
 			"gridSize": [6, 6],
 			"gridData": 
 			[
@@ -16,6 +17,7 @@
 		},
 		{
 			"levelId": "G",
+			"moves": 25,
 			"gridSize": [5, 5],
 			"gridData": 
 			[
@@ -28,6 +30,7 @@
 		},
 		{
 			"levelId": "A",
+			"moves": 30,
 			"gridSize": [6, 6],
 			"gridData": 
 			[

@@ -6,9 +6,6 @@ namespace Frog_Feed_Order
 {
 	public class ArrowNode : BaseNode
 	{
-		void Awake()
-		{
-			RandomizeColor();
-		}
+
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,17 +9,119 @@ namespace Frog_Feed_Order
 	{
 		public static LevelManager Instance;
 
+		[Header("Level Variables")]
+		[SerializeField] int levelId;
+		[SerializeField] private TextAsset levelDatasJSON;
+		private LevelDatas levelDatas;
+		private LevelData level;
+
+		[Space(20)]
+		[SerializeField] private UIManager uiManager;
 		[SerializeField] private CameraController cameraController;
 		[SerializeField] private Grid grid;
+
+		private int leftMoves = 0;
+		private int rowSize;
+		private int columnSize;
+		private int frogCount = 0;
 
 		void Awake()
 		{
 			Instance = this;
+
+			FrogNode.OnFrogClick += UpdateMovesText;
+
+			ReadJSON();
 		}
 
 		void Start()
 		{
+			StartLevel();
+		}
+
+		/// <summary>
+		/// Read the JSON file containing the level information
+		/// </summary>
+		private void ReadJSON()
+		{
+			levelDatas = JsonUtility.FromJson<LevelDatas>(levelDatasJSON.text);
+
+			level = levelDatas.levelData[levelId];
+			leftMoves = level.moves;
+
+			rowSize = level.gridSize[0];
+			columnSize = level.gridSize[1];
+		}
+
+		/// <summary>
+		/// Start the level
+		/// </summary>
+		private void StartLevel()
+		{
+			// Generate the level grid
+			GenerateLevel();
+
+			// Assign the level values
+			AssignVariables();
+
+			// Center the camera
 			cameraController.ArrangeCamera(grid.GetNodeTransforms());
+		}
+
+		/// <summary>
+		/// Generate the level grid
+		/// </summary>
+		private void GenerateLevel()
+		{
+			grid.FillGrid(rowSize, columnSize, level);
+		}
+
+		/// <summary>
+		/// Assign the level values
+		/// </summary>
+		private void AssignVariables()
+		{
+			// Get the total number of frogs on the level
+			frogCount = grid.GetFrogCount();
+
+			// Update the level text
+			UpdateLevelText();
+
+			// Update the moves text
+			uiManager.SetMovesText(leftMoves);
+		}
+
+		/// <summary>
+		/// Updates the level text based on the current level
+		/// </summary>
+		private void UpdateLevelText()
+		{
+			uiManager.SetLevelText(level.levelId);
+		}
+
+		/// <summary>
+		/// Decrement left moves counter and update the moves text
+		/// </summary>
+		private void UpdateMovesText()
+		{
+			leftMoves--;
+			uiManager.SetMovesText(leftMoves);
+		}
+
+		/// <summary>
+		/// Check if the level has ended
+		/// </summary>
+		public void CheckLevelEnd()
+		{
+			if (IsOutOfMoves())
+			{
+				// TODO: LEVEL FAILED PANEL
+			}
+
+			if (frogCount == 0)
+			{
+				// TODO: LEVEL COMPLETED PANEL
+			}
 		}
 
 		/// <summary>
@@ -27,9 +130,16 @@ namespace Frog_Feed_Order
 		/// <param name="startNode"></param>
 		/// <param name="direction"></param>
 		/// <returns>Array of transforms along the path</returns>
-		public Transform[] GetPath(BaseNode startNode, FacingDirection direction)
+		public Transform[] GetPath(BaseNode startNode, FacingDirection direction, Colors color)
 		{
-			return grid.GetPath(startNode.rowIndex, startNode.columnIndex, direction).ToArray();
+			return grid.GetPath(startNode.rowIndex, startNode.columnIndex, direction, color).ToArray();
 		}
+
+		private bool IsOutOfMoves()
+		{
+			return leftMoves < frogCount;
+		}
+
+
 	}
 }

@@ -22,6 +22,8 @@ namespace Frog_Feed_Order
 			positions = new Transform[calculatedPath.Length];
 			this.positions = calculatedPath;
 
+			StopAllCoroutines();
+
 			StartCoroutine(ExtendTongue());
 		}
 
@@ -48,7 +50,8 @@ namespace Frog_Feed_Order
 			}
 
 			// Clear line
-			positions = null;
+			StopCoroutine(nameof(LerpPosition));
+			positions = new Transform[0];
 			lineRenderer.positionCount = 0;
 		}
 

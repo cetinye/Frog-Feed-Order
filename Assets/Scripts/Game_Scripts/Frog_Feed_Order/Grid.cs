@@ -8,13 +8,6 @@ namespace Frog_Feed_Order
 {
 	public class Grid : MonoBehaviour
 	{
-		[SerializeField] int levelId;
-
-		[Header("JSON")]
-		[SerializeField] private TextAsset levelDatasJSON;
-		[SerializeField] private LevelDatas levelDatas;
-		[SerializeField] private LevelData level;
-
 		[Header("Grid Variables")]
 		[SerializeField] private GrapeNode grapeNodePrefab;
 		[SerializeField] private ArrowNode arrowNodePrefab;
@@ -27,38 +20,26 @@ namespace Frog_Feed_Order
 		private int columnSize;
 
 		[Header("Node Variables")]
-		[SerializeField] private List<BaseNode> nodes = new List<BaseNode>();
+		private List<BaseNode> nodes = new List<BaseNode>();
+		private List<BaseNode> frogNodes = new List<BaseNode>();
 		private List<Transform> nodesTransforms = new List<Transform>();
 		private List<Transform> path = new List<Transform>();
-
-
-		void Awake()
-		{
-			ReadJSON();
-			FillGrid(rowSize, columnSize);
-		}
-
-		/// <summary>
-		/// Read the JSON file containing the level information
-		/// </summary>
-		private void ReadJSON()
-		{
-			levelDatas = JsonUtility.FromJson<LevelDatas>(levelDatasJSON.text);
-
-			level = levelDatas.levelData[levelId];
-
-			rowSize = level.gridSize[0];
-			columnSize = level.gridSize[1];
-		}
 
 		/// <summary>
 		/// Create a grid with given parameters
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
-		private void FillGrid(int rows, int columns)
+		public void FillGrid(int rows, int columns, LevelData level)
 		{
+			nodes.Clear();
+			nodesTransforms.Clear();
+			frogNodes.Clear();
+
 			int gridDataReadIndex = 0;
+
+			rowSize = rows;
+			columnSize = columns;
 
 			float posRow = startRowPos;
 			float posColumn = startColumnPos;
@@ -104,24 +85,28 @@ namespace Frog_Feed_Order
 						case "FU":
 							node = Instantiate(frogNodePrefab, transform);
 							((FrogNode)node).SetFacingDirection(FacingDirection.Up);
+							frogNodes.Add(node);
 							break;
 
 						// Frog Facing DOWN
 						case "FD":
 							node = Instantiate(frogNodePrefab, transform);
 							((FrogNode)node).SetFacingDirection(FacingDirection.Down);
+							frogNodes.Add(node);
 							break;
 
 						// Frog Facing LEFT
 						case "FL":
 							node = Instantiate(frogNodePrefab, transform);
 							((FrogNode)node).SetFacingDirection(FacingDirection.Left);
+							frogNodes.Add(node);
 							break;
 
 						// Frog Facing RIGHT
 						case "FR":
 							node = Instantiate(frogNodePrefab, transform);
 							((FrogNode)node).SetFacingDirection(FacingDirection.Right);
+							frogNodes.Add(node);
 							break;
 
 						default:
@@ -145,6 +130,54 @@ namespace Frog_Feed_Order
 				// Reset row position, next column position
 				posRow = startRowPos;
 				posColumn += spaceBetweenColumns;
+			}
+
+			ColorNodes();
+		}
+
+		/// <summary>
+		/// Set the color of nodes in the grid regarding frog color and face direction
+		/// </summary>
+		private void ColorNodes()
+		{
+			Colors frogColor;
+			FacingDirection dir;
+			int currentRowIndex;
+			int currentColumnIndex;
+
+			for (int i = 0; i < frogNodes.Count; i++)
+			{
+				frogColor = frogNodes[i].chosenColor;
+				dir = frogNodes[i].GetFacingDirection();
+				currentRowIndex = frogNodes[i].rowIndex;
+				currentColumnIndex = frogNodes[i].columnIndex;
+
+				// Traverse the grid until out of bounds
+				while (currentRowIndex >= 0 && currentRowIndex < rowSize && currentColumnIndex >= 0 && currentColumnIndex < columnSize)
+				{
+					Debug.Log(currentRowIndex + " " + currentColumnIndex);
+					GetBaseNode(currentRowIndex, currentColumnIndex).SetColor(frogColor);
+
+					// Move to next index regarding the direction
+					switch (dir)
+					{
+						case FacingDirection.Up:
+							currentRowIndex--;
+							break;
+
+						case FacingDirection.Down:
+							currentRowIndex++;
+							break;
+
+						case FacingDirection.Left:
+							currentColumnIndex--;
+							break;
+
+						case FacingDirection.Right:
+							currentColumnIndex++;
+							break;
+					}
+				}
 			}
 		}
 
@@ -175,7 +208,7 @@ namespace Frog_Feed_Order
 		/// <param name="startColumnIndex"></param>
 		/// <param name="direction"></param>
 		/// <returns>List of Transforms along the path</returns>
-		public List<Transform> GetPath(int startRowIndex, int startColumnIndex, FacingDirection direction)
+		public List<Transform> GetPath(int startRowIndex, int startColumnIndex, FacingDirection direction, Colors color)
 		{
 			// Reset variables and assign to starting indexes
 			path.Clear();
@@ -190,17 +223,28 @@ namespace Frog_Feed_Order
 				if (currentNode.TryGetComponent<GrapeNode>(out GrapeNode grapeNode))
 				{
 					path.Add(currentNode.transform);
+
+					// If not same color, return
+					if (grapeNode.chosenColor != color)
+						return path;
+
 				}
 				else if (currentNode.TryGetComponent<ArrowNode>(out ArrowNode arrowNode))
 				{
 					path.Add(currentNode.transform);
 
-					// Update travel direction
-					direction = arrowNode.GetFacingDirection();
+					// If same color, update travel direction
+					if (arrowNode.chosenColor == color)
+						direction = arrowNode.GetFacingDirection();
+
+					else
+						return path;
 				}
 				else if (currentNode.TryGetComponent<FrogNode>(out FrogNode frogNode))
 				{
-					path.Add(currentNode.transform);
+					// If this is the starting node, add to path
+					if (frogNode.rowIndex == startRowIndex && frogNode.columnIndex == startColumnIndex)
+						path.Add(currentNode.transform);
 				}
 
 				// Move to next index regarding the direction
@@ -226,6 +270,15 @@ namespace Frog_Feed_Order
 
 			return path;
 		}
+
+		/// <summary>
+		/// Get the total number of frog
+		/// </summary>
+		/// <returns># of frogs on the grid</returns>
+		public int GetFrogCount()
+		{
+			return frogNodes.Count;
+		}
 	}
 
 	[Serializable]
@@ -238,6 +291,7 @@ namespace Frog_Feed_Order
 	public class LevelData
 	{
 		public int levelId;
+		public int moves;
 		public int[] gridSize;
 		public string[] gridData;
 	}
