@@ -39,10 +39,6 @@ namespace Frog_Feed_Order
 			OnFrogClick?.Invoke();
 
 			lineController.AssignPathToLine(levelManager.GetPath(this, facingDirection, chosenColor));
-
-			// TODO: IF SUCCESSFUL, REMOVE FROG, DECREMENT FROG COUNT
-
-			// levelManager.CheckLevelEnd();
 		}
 
 		public void Disappear()
@@ -54,6 +50,9 @@ namespace Frog_Feed_Order
 
 				levelManager.RemoveNode(this);
 				gameObject.SetActive(false);
+				levelManager.DecreaseMovesCount();
+				levelManager.DecreaseFrogCount();
+				levelManager.CheckLevelEnd();
 			});
 		}
 	}

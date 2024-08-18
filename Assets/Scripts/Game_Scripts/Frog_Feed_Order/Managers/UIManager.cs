@@ -9,6 +9,8 @@ namespace Frog_Feed_Order
 	{
 		[SerializeField] private TMP_Text levelText;
 		[SerializeField] private TMP_Text movesText;
+		[SerializeField] private GameObject failPanel;
+		[SerializeField] private GameObject winPanel;
 
 		/// <summary>
 		/// Sets the level text
@@ -26,6 +28,22 @@ namespace Frog_Feed_Order
 		public void SetMovesText(int moves)
 		{
 			movesText.text = moves.ToString() + " MOVES";
+		}
+
+		public void SetFailPanel(bool state)
+		{
+			failPanel.SetActive(state);
+		}
+
+		public void SetWinPanel(bool state)
+		{
+			winPanel.SetActive(state);
+		}
+
+		public void Reset()
+		{
+			failPanel.SetActive(false);
+			winPanel.SetActive(false);
 		}
 	}
 }

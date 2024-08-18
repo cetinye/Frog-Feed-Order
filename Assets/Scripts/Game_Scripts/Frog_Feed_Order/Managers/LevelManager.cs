@@ -12,13 +12,13 @@ namespace Frog_Feed_Order
 		[Header("Level Variables")]
 		[SerializeField] int levelId;
 		[SerializeField] private TextAsset levelDatasJSON;
-		public LevelDatas levelDatas;
+		private LevelDatas levelDatas;
 		private LevelData level;
 
 		[Space(20)]
 		[SerializeField] private UIManager uiManager;
 		[SerializeField] private CameraController cameraController;
-		[SerializeField] private Grid grid;
+		[SerializeField] private GridController grid;
 
 		private int leftMoves = 0;
 		private int rowSize;
@@ -30,8 +30,6 @@ namespace Frog_Feed_Order
 			Instance = this;
 
 			FrogNode.OnFrogClick += UpdateMovesText;
-
-			ReadJSON();
 		}
 
 		void Start()
@@ -58,6 +56,9 @@ namespace Frog_Feed_Order
 		/// </summary>
 		private void StartLevel()
 		{
+			// Read the JSON containing level information
+			ReadJSON();
+
 			// Generate the level grid
 			GenerateLevel();
 
@@ -65,7 +66,7 @@ namespace Frog_Feed_Order
 			AssignVariables();
 
 			// Center the camera
-			cameraController.ArrangeCamera(grid.GetNodeTransforms());
+			cameraController.ArrangeCamera(grid.GetNodeTransforms(), GetMinLayerIndex());
 		}
 
 		/// <summary>
@@ -104,8 +105,16 @@ namespace Frog_Feed_Order
 		/// </summary>
 		private void UpdateMovesText()
 		{
-			leftMoves--;
 			uiManager.SetMovesText(leftMoves);
+		}
+
+		/// <summary>
+		/// Decrease the left moves counter
+		/// </summary>
+		public void DecreaseMovesCount()
+		{
+			leftMoves--;
+			UpdateMovesText();
 		}
 
 		/// <summary>
@@ -116,13 +125,13 @@ namespace Frog_Feed_Order
 			if (IsOutOfMoves())
 			{
 				Debug.LogWarning("OUT OF MOVES");
-				// TODO: LEVEL FAILED PANEL
+				uiManager.SetFailPanel(true);
 			}
 
 			if (frogCount == 0)
 			{
 				Debug.LogWarning("LEVEL COMPLETE");
-				// TODO: LEVEL COMPLETED PANEL
+				uiManager.SetWinPanel(true);
 			}
 		}
 
@@ -155,9 +164,54 @@ namespace Frog_Feed_Order
 			frogCount--;
 		}
 
+		/// <summary>
+		/// Remove the given node from nodes list
+		/// </summary>
+		/// <param name="node"></param>
 		public void RemoveNode(BaseNode node)
 		{
 			grid.RemoveNode(node);
+		}
+
+		/// <summary>
+		/// Get the minimum layer index for camera size arrangement
+		/// </summary>
+		/// <returns></returns>
+		public int GetMinLayerIndex()
+		{
+			return grid.GetMinLayerIndex();
+		}
+
+		/// <summary>
+		/// Continue to the next level
+		/// </summary>
+		public void Continue()
+		{
+			ResetLevel();
+
+			levelId++;
+			levelId = Mathf.Clamp(levelId, 0, levelDatas.levelData.Length - 1);
+
+			StartLevel();
+		}
+
+		/// <summary>
+		/// Restart the current level
+		/// </summary>
+		public void Restart()
+		{
+			ResetLevel();
+
+			StartLevel();
+		}
+
+		/// <summary>
+		/// Reset the level variables
+		/// </summary>
+		public void ResetLevel()
+		{
+			uiManager.Reset();
+			grid.Reset();
 		}
 	}
 }

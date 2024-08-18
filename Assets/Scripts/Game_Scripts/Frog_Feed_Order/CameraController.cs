@@ -11,14 +11,16 @@ namespace Frog_Feed_Order
 		[SerializeField] private Vector3 camPosOffset;
 		[SerializeField] private Vector3 camRotation;
 		private List<Transform> targets;
+		private int minLayerCount = 1;
 
 		/// <summary>
 		/// Arrange the camera in the middle of the given transforms
 		/// </summary>
 		/// <param name="transforms"></param>
-		public void ArrangeCamera(List<Transform> transforms)
+		public void ArrangeCamera(List<Transform> transforms, int minLayerIndex)
 		{
 			targets = transforms;
+			minLayerCount = minLayerIndex;
 			PositionCamera(CalculateMiddlePoint(transforms));
 		}
 
@@ -48,7 +50,7 @@ namespace Frog_Feed_Order
 			mainCamera.transform.position = new Vector3(middlePoint.x, 10f, middlePoint.z);
 			mainCamera.transform.position += camPosOffset;
 			mainCamera.transform.rotation = Quaternion.Euler(camRotation);
-			mainCamera.orthographicSize = (float)(Math.Sqrt(targets.Count / 2) + 1);
+			mainCamera.orthographicSize = (float)(Math.Sqrt(targets.Count / Mathf.Abs(minLayerCount)) + 4);
 		}
 	}
 }

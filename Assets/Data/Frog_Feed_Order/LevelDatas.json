@@ -3,41 +3,41 @@
 	[
 		{
 			"levelId": 0,
+			"moves": 4,
+			"gridSize": [4, 4],
+			"gridData": 
+			[
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] },
+				{ "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["FL"] },
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] },
+				{ "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["FL"] }
+			]
+		},
+		{
+			"levelId": 1,
+			"moves": 5,
+			"gridSize": [5, 5],
+			"gridData": 
+			[
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G", "G"] },
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G", "G"] },
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G", "G"] },
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G", "G"] },
+				{ "data": ["FR"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["G"] }, { "data": ["AU"] }
+			]
+		},
+		{
+			"levelId": 2,
 			"moves": 12,
 			"gridSize": [6, 6],
-			"gridData": [
-				{ "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["FD", "G"] }, { "data": ["FD", "G"] }, { "data": ["FD", "FL"] },
-				{ "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "FL"] },
-				{ "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "FL"] },
-				{ "data": ["G", "FR"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] },
-				{ "data": ["G", "FR"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] },
-				{ "data": ["FU", "FR"] }, { "data": ["FU", "G"] }, { "data": ["FU", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }
-			]
-		},
-		{
-			"levelId": "G",
-			"moves": 25,
-			"gridSize": [5, 5],
 			"gridData": 
 			[
-				"FR", "G", "G", "G", "G",
-				"FR", "G", "G", "G", "G",
-				"G", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL"
-			]
-		},
-		{
-			"levelId": "A",
-			"moves": 30,
-			"gridSize": [5, 5],
-			"gridData": 
-			[
-				"AD", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL",
-				"G", "G", "G", "G", "FL"
+				{ "data": ["FR", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "FL"] },
+				{ "data": ["FR", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "FL"] },
+				{ "data": ["FR", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "FL"] },
+				{ "data": ["G", "FR"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["FL", "G"] },
+				{ "data": ["G", "FR"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["FL", "G"] },
+				{ "data": ["G", "FR"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["G", "G"] }, { "data": ["FL", "G"] }
 			]
 		}
 	]

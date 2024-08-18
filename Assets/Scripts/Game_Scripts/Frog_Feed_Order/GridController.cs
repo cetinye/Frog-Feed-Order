@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Frog_Feed_Order
 {
-	public class Grid : MonoBehaviour
+	public class GridController : MonoBehaviour
 	{
 		[Header("Grid Variables")]
 		[SerializeField] private GrapeNode grapeNodePrefab;
@@ -19,6 +19,7 @@ namespace Frog_Feed_Order
 		[SerializeField] private float spaceBetweenNodes;
 		private int rowSize;
 		private int columnSize;
+		private int minLayerIndex = 0;
 
 		[Header("Node Variables")]
 		private List<BaseNode> nodes = new List<BaseNode>();
@@ -146,6 +147,8 @@ namespace Frog_Feed_Order
 
 							layerIndex--;
 							yPos -= spaceBetweenNodes;
+
+							minLayerIndex = Mathf.Min(minLayerIndex, layerIndex);
 						}
 					}
 
@@ -173,13 +176,14 @@ namespace Frog_Feed_Order
 		/// </summary>
 		private void ColorNodes()
 		{
+			List<BaseNode> remainingNodes = new List<BaseNode>(nodes);
 			Colors frogColor;
 			FacingDirection dir;
 			int currentRowIndex;
 			int currentColumnIndex;
 			int currentLayerIndex;
 
-			for (int i = frogNodes.Count - 1; i >= 0; i--)
+			for (int i = 0; i < frogNodes.Count; i++)
 			{
 				frogColor = frogNodes[i].chosenColor;
 				dir = frogNodes[i].GetFacingDirection();
@@ -190,8 +194,19 @@ namespace Frog_Feed_Order
 				// Traverse the grid until out of bounds
 				while (currentRowIndex >= 0 && currentRowIndex < rowSize && currentColumnIndex >= 0 && currentColumnIndex < columnSize)
 				{
-					BaseNode node = GetBaseNode(currentRowIndex, currentColumnIndex, currentLayerIndex);
+					BaseNode node = GetBaseNode(currentRowIndex, currentColumnIndex, remainingNodes);
 					node.SetColor(frogColor);
+					node.cell.SetColor(frogColor);
+					remainingNodes.Remove(node);
+
+					// Update direction faced arrow node
+					if (node.GetType() == typeof(ArrowNode))
+					{
+						Debug.Log("Arrow Node: " + ((ArrowNode)node).GetFacingDirection());
+						Debug.Log("CurrentRowIndex: " + currentRowIndex + " CurrentColumnIndex: " + currentColumnIndex);
+
+						dir = ((ArrowNode)node).GetFacingDirection();
+					}
 
 					// Move to next index regarding the direction
 					switch (dir)
@@ -213,6 +228,9 @@ namespace Frog_Feed_Order
 							break;
 					}
 				}
+
+				// Override falsely colored cells
+				frogNodes[i].UpdateColor();
 			}
 		}
 
@@ -271,6 +289,26 @@ namespace Frog_Feed_Order
 				if (nodes[cellIndex].layerIndex == layerIndex && nodes[cellIndex].rowIndex == rowIndex && nodes[cellIndex].columnIndex == columnIndex)
 				{
 					return nodes[cellIndex];
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Get the base node with given row index, column index and layer index
+		/// </summary>
+		/// <param name="rowIndex"></param>
+		/// <param name="columnIndex"></param>
+		/// <param name="layerIndex"></param>
+		/// <returns>BaseNode with given row, column and layer index</returns>
+		public BaseNode GetBaseNode(int rowIndex, int columnIndex, List<BaseNode> insideList)
+		{
+			for (int cellIndex = 0; cellIndex < insideList.Count; cellIndex++)
+			{
+				if (insideList[cellIndex].rowIndex == rowIndex && insideList[cellIndex].columnIndex == columnIndex)
+				{
+					return insideList[cellIndex];
 				}
 			}
 
@@ -363,6 +401,23 @@ namespace Frog_Feed_Order
 		public void RemoveNode(BaseNode node)
 		{
 			nodes.Remove(node);
+		}
+
+		public int GetMinLayerIndex()
+		{
+			return minLayerIndex;
+		}
+
+		public void Reset()
+		{
+			for (int i = 0; i < transform.childCount; i++)
+			{
+				Destroy(transform.GetChild(i).gameObject);
+			}
+
+			nodes.Clear();
+			nodesTransforms.Clear();
+			frogNodes.Clear();
 		}
 	}
 

@@ -49,8 +49,6 @@ namespace Frog_Feed_Order
 			// if wrong path, dont collect
 			if (positions[^1].GetComponent<BaseNode>().chosenColor != frogNode.chosenColor)
 				isCollectable = false;
-			else // else, decrease frog count
-				levelManager.DecreaseFrogCount();
 
 			// Extend Tongue
 			for (int i = 0; i < positions.Length; i++)
@@ -99,7 +97,12 @@ namespace Frog_Feed_Order
 			if (isCollectable)
 				frogNode.Disappear();
 
-			levelManager.CheckLevelEnd();
+			// If path is wrong, decrease moves limit and check for end game
+			if (!isCollectable)
+			{
+				levelManager.DecreaseMovesCount();
+				levelManager.CheckLevelEnd();
+			}
 		}
 
 		/// <summary>

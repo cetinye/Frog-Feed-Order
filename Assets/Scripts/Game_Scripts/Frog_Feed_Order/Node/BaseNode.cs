@@ -66,6 +66,14 @@ namespace Frog_Feed_Order
 		}
 
 		/// <summary>
+		/// Update the color of the node
+		/// </summary>
+		public void UpdateColor()
+		{
+			SetColor(chosenColor);
+		}
+
+		/// <summary>
 		/// Sets the facing direction of the node
 		/// </summary>
 		/// <param name="direction"></param>
