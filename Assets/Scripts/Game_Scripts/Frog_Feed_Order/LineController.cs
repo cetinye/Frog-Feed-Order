@@ -36,6 +36,7 @@ namespace Frog_Feed_Order
 		/// <returns></returns>
 		IEnumerator ExtendTongue()
 		{
+			bool isCollectable = true;
 			List<GrapeNode> visitedNodes = new List<GrapeNode>();
 
 			// Extend Tongue
@@ -55,9 +56,13 @@ namespace Frog_Feed_Order
 				if (positions[i].TryGetComponent(out GrapeNode grapeNode))
 				{
 					visitedNodes.Add(grapeNode);
-					grapeNode.OnVisit?.Invoke();
+					grapeNode.OnVisit?.Invoke(frogNode.chosenColor);
 				}
 			}
+
+			// Check if the last node is the same color as the frog
+			if (visitedNodes[^1].chosenColor != frogNode.chosenColor)
+				isCollectable = false;
 
 			// Retract Tongue
 			for (int i = positions.Length - 1; i >= 0; i--)
@@ -67,7 +72,8 @@ namespace Frog_Feed_Order
 				StartCoroutine(LerpPosition(positions[i].transform.position, tongueMoveInterval, i));
 				yield return new WaitForSeconds(tongueMoveInterval);
 
-				if (positions[i].TryGetComponent(out GrapeNode grapeNode))
+				// if path is correct, move and set grapes parent
+				if (isCollectable && positions[i].TryGetComponent(out GrapeNode grapeNode))
 				{
 					grapeNode.GetItem().transform.SetParent(tongueTr, true);
 

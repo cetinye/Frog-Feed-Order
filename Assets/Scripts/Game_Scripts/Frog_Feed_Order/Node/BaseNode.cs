@@ -8,7 +8,7 @@ namespace Frog_Feed_Order
 	public class BaseNode : MonoBehaviour
 	{
 		public Cell cell;
-		public Action OnVisit;
+		public Action<Colors> OnVisit;
 		public Action<int, float> OnRetract;
 
 		[Header("Index Variables")]
@@ -102,7 +102,7 @@ namespace Frog_Feed_Order
 		/// <summary>
 		/// Virtual function for when the different nodes are visited
 		/// </summary>
-		public virtual void OnNodeVisited()
+		public virtual void OnNodeVisited(Colors colors)
 		{
 
 		}

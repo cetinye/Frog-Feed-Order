@@ -12,7 +12,7 @@ namespace Frog_Feed_Order
 		[Header("Tween Variables")]
 		[SerializeField] private Vector3 scaleTo;
 		[SerializeField] private float timeToScale;
-		private Tween onVisitAnimation;
+		private Sequence onVisitAnimation;
 		private Sequence onRetractAnimation;
 
 		void OnEnable()
@@ -30,10 +30,16 @@ namespace Frog_Feed_Order
 		/// <summary>
 		/// Animate when tongue reaches the node. Invoked when the node is visited.
 		/// </summary>
-		public override void OnNodeVisited()
+		public override void OnNodeVisited(Colors color)
 		{
 			onVisitAnimation?.Kill();
-			onVisitAnimation = meshRenderer.transform.DOScale(scaleTo, timeToScale).SetLoops(2, LoopType.Yoyo);
+
+			onVisitAnimation = DOTween.Sequence();
+
+			onVisitAnimation.Append(meshRenderer.transform.DOScale(scaleTo, timeToScale).SetLoops(2, LoopType.Yoyo));
+
+			if (color != chosenColor)
+				onVisitAnimation.Join(meshRenderer.materials[0].DOColor(Color.red, 0.2f).SetLoops(2, LoopType.Yoyo));
 		}
 
 		/// <summary>
