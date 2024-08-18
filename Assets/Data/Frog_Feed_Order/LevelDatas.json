@@ -3,7 +3,7 @@
 	[
 		{
 			"levelId": 0,
-			"moves": 20,
+			"moves": 6,
 			"gridSize": [6, 6],
 			"gridData": 
 			[
@@ -31,15 +31,14 @@
 		{
 			"levelId": "A",
 			"moves": 30,
-			"gridSize": [6, 6],
+			"gridSize": [5, 5],
 			"gridData": 
 			[
-				"G", "G", "G", "G", "G", "G",
-				"G", "AU", "AD", "G", "AR", "FL",
-				"G", "G", "G", "FR", "G", "G",
-				"G", "G", "FU", "FD", "G", "G",
-				"G", "AD", "G", "G", "AL", "G",
-				"G", "G", "G", "G", "G", "G"
+				"AD", "G", "G", "G", "FL",
+				"G", "G", "G", "G", "FL",
+				"G", "G", "G", "G", "FL",
+				"G", "G", "G", "G", "FL",
+				"G", "G", "G", "G", "FL"
 			]
 		}
 	]

@@ -7,6 +7,8 @@ namespace Frog_Feed_Order
 {
 	public class LineController : MonoBehaviour
 	{
+		private LevelManager levelManager;
+
 		[SerializeField] private FrogNode frogNode;
 		[SerializeField] private Transform tongueTr;
 		[SerializeField] private LineRenderer lineRenderer;
@@ -14,6 +16,11 @@ namespace Frog_Feed_Order
 		[SerializeField] private float tongueMoveInterval;
 		private Transform[] positions;
 		private Transform[] tempPath;
+
+		void Start()
+		{
+			levelManager = LevelManager.Instance;
+		}
 
 		/// <summary>
 		/// Assigns the calculated path to the line
@@ -39,6 +46,12 @@ namespace Frog_Feed_Order
 			bool isCollectable = true;
 			List<GrapeNode> visitedNodes = new List<GrapeNode>();
 
+			// if wrong path, dont collect
+			if (positions[^1].GetComponent<BaseNode>().chosenColor != frogNode.chosenColor)
+				isCollectable = false;
+			else // else, decrease frog count
+				levelManager.DecreaseFrogCount();
+
 			// Extend Tongue
 			for (int i = 0; i < positions.Length; i++)
 			{
@@ -60,10 +73,6 @@ namespace Frog_Feed_Order
 				}
 			}
 
-			// Check if the last node is the same color as the frog
-			if (visitedNodes[^1].chosenColor != frogNode.chosenColor)
-				isCollectable = false;
-
 			// Retract Tongue
 			for (int i = positions.Length - 1; i >= 0; i--)
 			{
@@ -73,40 +82,24 @@ namespace Frog_Feed_Order
 				yield return new WaitForSeconds(tongueMoveInterval);
 
 				// if path is correct, move and set grapes parent
-				if (isCollectable && positions[i].TryGetComponent(out GrapeNode grapeNode))
+				if (isCollectable && positions[i].TryGetComponent(out BaseNode baseNode))
 				{
-					grapeNode.GetItem().transform.SetParent(tongueTr, true);
-
-					switch (frogNode.facingDirection)
-					{
-						case FacingDirection.Down:
-							newPos = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z - (positions.Length - i - 1) * 0.5f);
-							break;
-
-						case FacingDirection.Up:
-							newPos = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z + (positions.Length - i - 1) * 0.5f);
-							break;
-
-						case FacingDirection.Left:
-							newPos = new Vector3(tongueTr.position.x - (positions.Length - i - 1) * 0.5f, tongueTr.position.y, tongueTr.position.z);
-							break;
-
-						case FacingDirection.Right:
-							newPos = new Vector3(tongueTr.position.x + (positions.Length - i - 1) * 0.5f, tongueTr.position.y, tongueTr.position.z);
-							break;
-					}
-
-					grapeNode.GetItem().position = newPos;
-					grapeNode.OnRetract?.Invoke(i - 1, tongueMoveInterval);
+					baseNode.OnRetract?.Invoke(i - 1, tongueMoveInterval, tongueTr);
 				}
 
-				lineRenderer.positionCount--;
+				if (lineRenderer.positionCount > 2)
+					lineRenderer.positionCount--;
 			}
 
 			// Clear line
 			StopCoroutine(nameof(LerpPosition));
 			positions = new Transform[0];
 			lineRenderer.positionCount = 0;
+
+			if (isCollectable)
+				frogNode.Disappear();
+
+			levelManager.CheckLevelEnd();
 		}
 
 		/// <summary>

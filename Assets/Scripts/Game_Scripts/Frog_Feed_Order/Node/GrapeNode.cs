@@ -15,6 +15,11 @@ namespace Frog_Feed_Order
 		private Sequence onVisitAnimation;
 		private Sequence onRetractAnimation;
 
+		[Header("Retract MoveTowards Variables")]
+		private Transform targetTransform;
+		private float retractSpeed = 4f;
+		private bool isRetracted = false;
+
 		void OnEnable()
 		{
 			OnVisit += OnNodeVisited;
@@ -25,6 +30,15 @@ namespace Frog_Feed_Order
 		{
 			OnVisit -= OnNodeVisited;
 			OnRetract -= OnNodeRetracted;
+		}
+
+		void Update()
+		{
+			// if node is retracted, move item towards target
+			if (isRetracted)
+			{
+				item.transform.position = Vector3.MoveTowards(item.transform.position, targetTransform.position, retractSpeed * Time.deltaTime);
+			}
 		}
 
 		/// <summary>
@@ -47,25 +61,20 @@ namespace Frog_Feed_Order
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="time"></param>
-		public override void OnNodeRetracted(int index, float time)
+		public override void OnNodeRetracted(int index, float time, Transform target)
 		{
 			onRetractAnimation?.Kill();
+
+			targetTransform = target;
+			isRetracted = true;
 
 			float newTime = time * index;
 
 			onRetractAnimation = DOTween.Sequence();
 			onRetractAnimation.Append(meshRenderer.transform.DOScale(transform.localScale, newTime));
+			onRetractAnimation.Join(cell.transform.DOScale(Vector3.zero, newTime + time).SetEase(Ease.Linear));
 			onRetractAnimation.Append(meshRenderer.transform.DOScale(Vector3.zero, time).SetEase(Ease.Linear));
-			onRetractAnimation.Play();
-		}
-
-		/// <summary>
-		/// Get the item transform
-		/// </summary>
-		/// <returns>Transform of the item</returns>
-		public Transform GetItem()
-		{
-			return item;
+			onRetractAnimation.OnComplete(() => gameObject.SetActive(false));
 		}
 	}
 }

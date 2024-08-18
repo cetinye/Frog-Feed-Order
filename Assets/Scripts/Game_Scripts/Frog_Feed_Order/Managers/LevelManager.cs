@@ -115,11 +115,13 @@ namespace Frog_Feed_Order
 		{
 			if (IsOutOfMoves())
 			{
+				Debug.LogWarning("OUT OF MOVES");
 				// TODO: LEVEL FAILED PANEL
 			}
 
 			if (frogCount == 0)
 			{
+				Debug.LogWarning("LEVEL COMPLETE");
 				// TODO: LEVEL COMPLETED PANEL
 			}
 		}
@@ -141,7 +143,16 @@ namespace Frog_Feed_Order
 		/// <returns>a boolean indicating if the level is out of moves</returns>
 		private bool IsOutOfMoves()
 		{
+			Debug.Log("Left Moves: " + leftMoves + " Frog Count: " + frogCount);
 			return leftMoves < frogCount;
+		}
+
+		/// <summary>
+		/// Decrease the frog count
+		/// </summary>
+		public void DecreaseFrogCount()
+		{
+			frogCount--;
 		}
 	}
 }

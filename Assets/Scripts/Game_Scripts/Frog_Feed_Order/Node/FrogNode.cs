@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Frog_Feed_Order
@@ -12,6 +13,9 @@ namespace Frog_Feed_Order
 
 		private LineController lineController;
 		private LevelManager levelManager;
+
+		[Header("Tween Variables")]
+		private float disappearTime = 0.2f;
 
 		void Awake()
 		{
@@ -39,6 +43,11 @@ namespace Frog_Feed_Order
 			// TODO: IF SUCCESSFUL, REMOVE FROG, DECREMENT FROG COUNT
 
 			// levelManager.CheckLevelEnd();
+		}
+
+		public void Disappear()
+		{
+			transform.DOScale(Vector3.zero, disappearTime).OnComplete(() => gameObject.SetActive(false));
 		}
 	}
 }
