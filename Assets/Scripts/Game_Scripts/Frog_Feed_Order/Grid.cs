@@ -16,6 +16,7 @@ namespace Frog_Feed_Order
 		[SerializeField] private float startColumnPos;
 		[SerializeField] private float spaceBetweenRows;
 		[SerializeField] private float spaceBetweenColumns;
+		[SerializeField] private float spaceBetweenNodes;
 		private int rowSize;
 		private int columnSize;
 
@@ -43,96 +44,128 @@ namespace Frog_Feed_Order
 
 			float posRow = startRowPos;
 			float posColumn = startColumnPos;
+			float yPos = 0;
+			int layerIndex = 0;
 
 			for (int rowIndex = 0; rowIndex < rows; rowIndex++)
 			{
 				for (int columnIndex = 0; columnIndex < columns; columnIndex++)
 				{
-					BaseNode node = null;
+					// Access the current NodeData
+					NodeData currentNodeData = level.gridData[gridDataReadIndex];
+					layerIndex = 0;
+					yPos = 0;
+					BaseNode previousNode = null;
 
-					switch (level.gridData[gridDataReadIndex])
+					// Loop through the data array of the current NodeData
+					for (int cellIndex = 0; cellIndex < currentNodeData.data.Length; cellIndex++)
 					{
-						// Grape
-						case "G":
-							node = Instantiate(grapeNodePrefab, transform);
-							break;
+						BaseNode node = null;
 
-						// Arrow Facing UP
-						case "AU":
-							node = Instantiate(arrowNodePrefab, transform);
-							((ArrowNode)node).SetFacingDirection(FacingDirection.Up);
-							break;
+						// Determine the type of node to instantiate based on the data
+						switch (currentNodeData.data[cellIndex])
+						{
+							// Grape
+							case "G":
+								node = Instantiate(grapeNodePrefab, transform);
+								break;
 
-						// Arrow Facing DOWN
-						case "AD":
-							node = Instantiate(arrowNodePrefab, transform);
-							((ArrowNode)node).SetFacingDirection(FacingDirection.Down);
-							break;
+							// Arrow Facing UP
+							case "AU":
+								node = Instantiate(arrowNodePrefab, transform);
+								((ArrowNode)node).SetFacingDirection(FacingDirection.Up);
+								break;
 
-						// Arrow Facing LEFT
-						case "AL":
-							node = Instantiate(arrowNodePrefab, transform);
-							((ArrowNode)node).SetFacingDirection(FacingDirection.Left);
-							break;
+							// Arrow Facing DOWN
+							case "AD":
+								node = Instantiate(arrowNodePrefab, transform);
+								((ArrowNode)node).SetFacingDirection(FacingDirection.Down);
+								break;
 
-						// Arrow Facing RIGHT
-						case "AR":
-							node = Instantiate(arrowNodePrefab, transform);
-							((ArrowNode)node).SetFacingDirection(FacingDirection.Right);
-							break;
+							// Arrow Facing LEFT
+							case "AL":
+								node = Instantiate(arrowNodePrefab, transform);
+								((ArrowNode)node).SetFacingDirection(FacingDirection.Left);
+								break;
 
-						// Frog Facing UP
-						case "FU":
-							node = Instantiate(frogNodePrefab, transform);
-							((FrogNode)node).SetFacingDirection(FacingDirection.Up);
-							frogNodes.Add(node);
-							break;
+							// Arrow Facing RIGHT
+							case "AR":
+								node = Instantiate(arrowNodePrefab, transform);
+								((ArrowNode)node).SetFacingDirection(FacingDirection.Right);
+								break;
 
-						// Frog Facing DOWN
-						case "FD":
-							node = Instantiate(frogNodePrefab, transform);
-							((FrogNode)node).SetFacingDirection(FacingDirection.Down);
-							frogNodes.Add(node);
-							break;
+							// Frog Facing UP
+							case "FU":
+								node = Instantiate(frogNodePrefab, transform);
+								((FrogNode)node).SetFacingDirection(FacingDirection.Up);
+								frogNodes.Add(node);
+								break;
 
-						// Frog Facing LEFT
-						case "FL":
-							node = Instantiate(frogNodePrefab, transform);
-							((FrogNode)node).SetFacingDirection(FacingDirection.Left);
-							frogNodes.Add(node);
-							break;
+							// Frog Facing DOWN
+							case "FD":
+								node = Instantiate(frogNodePrefab, transform);
+								((FrogNode)node).SetFacingDirection(FacingDirection.Down);
+								frogNodes.Add(node);
+								break;
 
-						// Frog Facing RIGHT
-						case "FR":
-							node = Instantiate(frogNodePrefab, transform);
-							((FrogNode)node).SetFacingDirection(FacingDirection.Right);
-							frogNodes.Add(node);
-							break;
+							// Frog Facing LEFT
+							case "FL":
+								node = Instantiate(frogNodePrefab, transform);
+								((FrogNode)node).SetFacingDirection(FacingDirection.Left);
+								frogNodes.Add(node);
+								break;
 
-						default:
-							Debug.Log("Invalid grid data: " + level.gridData[gridDataReadIndex]);
-							break;
+							// Frog Facing RIGHT
+							case "FR":
+								node = Instantiate(frogNodePrefab, transform);
+								((FrogNode)node).SetFacingDirection(FacingDirection.Right);
+								frogNodes.Add(node);
+								break;
+
+							// Handle invalid grid data
+							default:
+								Debug.Log("Invalid grid data: " + currentNodeData.data[cellIndex]);
+								break;
+						}
+
+						// Setup Node
+						if (node != null)
+						{
+							node.transform.position = new Vector3(posRow, yPos, posColumn);
+							node.SetIndex(rowIndex, columnIndex, layerIndex);
+							nodes.Add(node);
+							nodesTransforms.Add(node.transform);
+
+							// if (layerIndex != 0)
+							// 	node.NodeOff();
+
+							if (layerIndex != 0 && layerIndex > -currentNodeData.data.Length)
+								previousNode.nodeUnder = node;
+
+							previousNode = node;
+
+							layerIndex--;
+							yPos -= spaceBetweenNodes;
+						}
 					}
 
-					// Setup Node
-					node.transform.position = new Vector3(posRow, 0, posColumn);
-					node.SetIndex(rowIndex, columnIndex);
-					nodes.Add(node);
-					nodesTransforms.Add(node.transform);
-
-					// Next grid data
+					// Move to the next grid data
 					gridDataReadIndex++;
 
-					// Next row position
+					// Adjust the position for the next row
 					posRow += spaceBetweenRows;
 				}
 
-				// Reset row position, next column position
+				// Reset row position and adjust for the next column
 				posRow = startRowPos;
 				posColumn += spaceBetweenColumns;
 			}
 
+			// Apply colors to the nodes
 			ColorNodes();
+
+			// Hide all nodes, except top layer nodes
+			HideNodes();
 		}
 
 		/// <summary>
@@ -144,18 +177,21 @@ namespace Frog_Feed_Order
 			FacingDirection dir;
 			int currentRowIndex;
 			int currentColumnIndex;
+			int currentLayerIndex;
 
-			for (int i = 0; i < frogNodes.Count; i++)
+			for (int i = frogNodes.Count - 1; i >= 0; i--)
 			{
 				frogColor = frogNodes[i].chosenColor;
 				dir = frogNodes[i].GetFacingDirection();
 				currentRowIndex = frogNodes[i].rowIndex;
 				currentColumnIndex = frogNodes[i].columnIndex;
+				currentLayerIndex = frogNodes[i].layerIndex;
 
 				// Traverse the grid until out of bounds
 				while (currentRowIndex >= 0 && currentRowIndex < rowSize && currentColumnIndex >= 0 && currentColumnIndex < columnSize)
 				{
-					GetBaseNode(currentRowIndex, currentColumnIndex).SetColor(frogColor);
+					BaseNode node = GetBaseNode(currentRowIndex, currentColumnIndex, currentLayerIndex);
+					node.SetColor(frogColor);
 
 					// Move to next index regarding the direction
 					switch (dir)
@@ -181,6 +217,19 @@ namespace Frog_Feed_Order
 		}
 
 		/// <summary>
+		/// Hide all nodes except top layer nodes
+		/// </summary>
+		private void HideNodes()
+		{
+			foreach (BaseNode node in nodes)
+			{
+				// If not top layer, hide
+				if (node.layerIndex != 0)
+					node.NodeOff();
+			}
+		}
+
+		/// <summary>
 		/// Get the list of nodes transforms
 		/// </summary>
 		/// <returns>The list of nodes transforms</returns>
@@ -197,7 +246,35 @@ namespace Frog_Feed_Order
 		/// <returns>BaseNode with given row and column index</returns>
 		public BaseNode GetBaseNode(int rowIndex, int columnIndex)
 		{
-			return nodes.Find(node => node.rowIndex == rowIndex && node.columnIndex == columnIndex);
+			for (int cellIndex = 0; cellIndex < nodes.Count; cellIndex++)
+			{
+				if (nodes[cellIndex].rowIndex == rowIndex && nodes[cellIndex].columnIndex == columnIndex)
+				{
+					return nodes[cellIndex];
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Get the base node with given row index, column index and layer index
+		/// </summary>
+		/// <param name="rowIndex"></param>
+		/// <param name="columnIndex"></param>
+		/// <param name="layerIndex"></param>
+		/// <returns>BaseNode with given row, column and layer index</returns>
+		public BaseNode GetBaseNode(int rowIndex, int columnIndex, int layerIndex)
+		{
+			for (int cellIndex = 0; cellIndex < nodes.Count; cellIndex++)
+			{
+				if (nodes[cellIndex].layerIndex == layerIndex && nodes[cellIndex].rowIndex == rowIndex && nodes[cellIndex].columnIndex == columnIndex)
+				{
+					return nodes[cellIndex];
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -278,6 +355,15 @@ namespace Frog_Feed_Order
 		{
 			return frogNodes.Count;
 		}
+
+		/// <summary>
+		/// Remove the given node from the path calculation list
+		/// </summary>
+		/// <param name="node"></param>
+		public void RemoveNode(BaseNode node)
+		{
+			nodes.Remove(node);
+		}
 	}
 
 	[Serializable]
@@ -287,11 +373,17 @@ namespace Frog_Feed_Order
 	}
 
 	[Serializable]
+	public class NodeData
+	{
+		public string[] data;
+	}
+
+	[Serializable]
 	public class LevelData
 	{
 		public int levelId;
 		public int moves;
 		public int[] gridSize;
-		public string[] gridData;
+		public NodeData[] gridData;
 	}
 }

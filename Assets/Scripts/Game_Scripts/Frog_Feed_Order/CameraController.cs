@@ -48,7 +48,7 @@ namespace Frog_Feed_Order
 			mainCamera.transform.position = new Vector3(middlePoint.x, 10f, middlePoint.z);
 			mainCamera.transform.position += camPosOffset;
 			mainCamera.transform.rotation = Quaternion.Euler(camRotation);
-			mainCamera.orthographicSize = (float)(Math.Sqrt(targets.Count) + 1);
+			mainCamera.orthographicSize = (float)(Math.Sqrt(targets.Count / 2) + 1);
 		}
 	}
 }

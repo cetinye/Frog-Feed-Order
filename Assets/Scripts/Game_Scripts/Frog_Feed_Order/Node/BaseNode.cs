@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Frog_Feed_Order
@@ -8,12 +9,15 @@ namespace Frog_Feed_Order
 	public class BaseNode : MonoBehaviour
 	{
 		public Cell cell;
+		public Transform item;
+		public BaseNode nodeUnder;
 		public Action<Colors> OnVisit;
 		public Action<int, float, Transform> OnRetract;
 
 		[Header("Index Variables")]
 		public int rowIndex;
 		public int columnIndex;
+		public int layerIndex;
 
 		[Header("Color Variables")]
 		public Colors chosenColor;
@@ -28,10 +32,11 @@ namespace Frog_Feed_Order
 		/// </summary>
 		/// <param name="row"></param>
 		/// <param name="column"></param>
-		public void SetIndex(int row, int column)
+		public void SetIndex(int row, int column, int layer)
 		{
 			rowIndex = row;
 			columnIndex = column;
+			layerIndex = layer;
 
 			gameObject.name = $"Node ({rowIndex}, {columnIndex})";
 		}
@@ -88,6 +93,20 @@ namespace Frog_Feed_Order
 					transform.localRotation = Quaternion.Euler(0, -90, 0);
 					break;
 			}
+		}
+
+		public void NodeOff()
+		{
+			item.gameObject.SetActive(false);
+		}
+
+		public void NodeOn()
+		{
+			layerIndex = 0;
+
+			item.transform.localScale = Vector3.zero;
+			item.gameObject.SetActive(true);
+			item.transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.Linear);
 		}
 
 		/// <summary>

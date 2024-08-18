@@ -169,6 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelId: 0
   levelDatasJSON: {fileID: 4900000, guid: 08d2d0d24d7872d459fb9cc5d2128837, type: 3}
+  levelDatas:
+    levelData: []
   uiManager: {fileID: 1040858068}
   cameraController: {fileID: 330585548}
   grid: {fileID: 539381844}
@@ -542,6 +544,7 @@ MonoBehaviour:
   startColumnPos: 4
   spaceBetweenRows: 1
   spaceBetweenColumns: -1
+  spaceBetweenNodes: 0.1
 --- !u!1 &668794839
 GameObject:
   m_ObjectHideFlags: 0

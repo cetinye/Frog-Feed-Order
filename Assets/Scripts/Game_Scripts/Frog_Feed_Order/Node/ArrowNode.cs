@@ -7,6 +7,8 @@ namespace Frog_Feed_Order
 {
 	public class ArrowNode : BaseNode
 	{
+		private LevelManager levelManager;
+
 		void OnEnable()
 		{
 			OnVisit += OnNodeVisited;
@@ -19,6 +21,11 @@ namespace Frog_Feed_Order
 			OnRetract -= OnNodeRetracted;
 		}
 
+		void Start()
+		{
+			levelManager = LevelManager.Instance;
+		}
+
 		/// <summary>
 		/// Animate when tongue reaches the node. Invoked when the node is retracted.
 		/// </summary>
@@ -27,7 +34,14 @@ namespace Frog_Feed_Order
 		public override void OnNodeRetracted(int index, float time, Transform target)
 		{
 			float newTime = time * index;
-			transform.DOScale(Vector3.zero, newTime + time).SetEase(Ease.Linear).OnComplete(() => gameObject.SetActive(false));
+			transform.DOScale(Vector3.zero, newTime + time).SetEase(Ease.Linear).OnComplete(() =>
+			{
+				if (nodeUnder != null)
+					nodeUnder.NodeOn();
+
+				levelManager.RemoveNode(this);
+				gameObject.SetActive(false);
+			});
 		}
 	}
 }

@@ -47,7 +47,14 @@ namespace Frog_Feed_Order
 
 		public void Disappear()
 		{
-			transform.DOScale(Vector3.zero, disappearTime).OnComplete(() => gameObject.SetActive(false));
+			transform.DOScale(Vector3.zero, disappearTime).OnComplete(() =>
+			{
+				if (nodeUnder != null)
+					nodeUnder.NodeOn();
+
+				levelManager.RemoveNode(this);
+				gameObject.SetActive(false);
+			});
 		}
 	}
 }

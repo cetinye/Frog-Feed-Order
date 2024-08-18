@@ -7,7 +7,7 @@ namespace Frog_Feed_Order
 {
 	public class GrapeNode : BaseNode
 	{
-		[SerializeField] private Transform item;
+		private LevelManager levelManager;
 
 		[Header("Tween Variables")]
 		[SerializeField] private Vector3 scaleTo;
@@ -30,6 +30,11 @@ namespace Frog_Feed_Order
 		{
 			OnVisit -= OnNodeVisited;
 			OnRetract -= OnNodeRetracted;
+		}
+
+		void Start()
+		{
+			levelManager = LevelManager.Instance;
 		}
 
 		void Update()
@@ -74,7 +79,14 @@ namespace Frog_Feed_Order
 			onRetractAnimation.Append(meshRenderer.transform.DOScale(transform.localScale, newTime));
 			onRetractAnimation.Join(cell.transform.DOScale(Vector3.zero, newTime + time).SetEase(Ease.Linear));
 			onRetractAnimation.Append(meshRenderer.transform.DOScale(Vector3.zero, time).SetEase(Ease.Linear));
-			onRetractAnimation.OnComplete(() => gameObject.SetActive(false));
+			onRetractAnimation.OnComplete(() =>
+			{
+				if (nodeUnder != null)
+					nodeUnder.NodeOn();
+
+				levelManager.RemoveNode(this);
+				gameObject.SetActive(false);
+			});
 		}
 	}
 }

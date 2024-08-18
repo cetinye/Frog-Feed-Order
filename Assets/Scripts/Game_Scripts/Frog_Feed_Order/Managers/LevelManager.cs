@@ -12,7 +12,7 @@ namespace Frog_Feed_Order
 		[Header("Level Variables")]
 		[SerializeField] int levelId;
 		[SerializeField] private TextAsset levelDatasJSON;
-		private LevelDatas levelDatas;
+		public LevelDatas levelDatas;
 		private LevelData level;
 
 		[Space(20)]
@@ -153,6 +153,11 @@ namespace Frog_Feed_Order
 		public void DecreaseFrogCount()
 		{
 			frogCount--;
+		}
+
+		public void RemoveNode(BaseNode node)
+		{
+			grid.RemoveNode(node);
 		}
 	}
 }
