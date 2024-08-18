@@ -49,7 +49,7 @@ namespace Frog_Feed_Order
 
 			onRetractAnimation = DOTween.Sequence();
 			onRetractAnimation.Append(meshRenderer.transform.DOScale(transform.localScale, newTime));
-			onRetractAnimation.Append(meshRenderer.transform.DOScale(Vector3.zero, time));
+			onRetractAnimation.Append(meshRenderer.transform.DOScale(Vector3.zero, time).SetEase(Ease.Linear));
 			onRetractAnimation.Play();
 		}
 

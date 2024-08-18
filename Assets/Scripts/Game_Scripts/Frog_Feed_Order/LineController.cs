@@ -7,6 +7,7 @@ namespace Frog_Feed_Order
 {
 	public class LineController : MonoBehaviour
 	{
+		[SerializeField] private FrogNode frogNode;
 		[SerializeField] private Transform tongueTr;
 		[SerializeField] private LineRenderer lineRenderer;
 		[SerializeField] private float lineHeight;
@@ -61,13 +62,35 @@ namespace Frog_Feed_Order
 			// Retract Tongue
 			for (int i = positions.Length - 1; i >= 0; i--)
 			{
+				Vector3 newPos = Vector3.zero;
+
 				StartCoroutine(LerpPosition(positions[i].transform.position, tongueMoveInterval, i));
 				yield return new WaitForSeconds(tongueMoveInterval);
 
 				if (positions[i].TryGetComponent(out GrapeNode grapeNode))
 				{
 					grapeNode.GetItem().transform.SetParent(tongueTr, true);
-					grapeNode.GetItem().position = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z - (positions.Length - i - 1) * 0.5f);
+
+					switch (frogNode.facingDirection)
+					{
+						case FacingDirection.Down:
+							newPos = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z - (positions.Length - i - 1) * 0.5f);
+							break;
+
+						case FacingDirection.Up:
+							newPos = new Vector3(tongueTr.position.x, tongueTr.position.y, tongueTr.position.z + (positions.Length - i - 1) * 0.5f);
+							break;
+
+						case FacingDirection.Left:
+							newPos = new Vector3(tongueTr.position.x - (positions.Length - i - 1) * 0.5f, tongueTr.position.y, tongueTr.position.z);
+							break;
+
+						case FacingDirection.Right:
+							newPos = new Vector3(tongueTr.position.x + (positions.Length - i - 1) * 0.5f, tongueTr.position.y, tongueTr.position.z);
+							break;
+					}
+
+					grapeNode.GetItem().position = newPos;
 					grapeNode.OnRetract?.Invoke(i - 1, tongueMoveInterval);
 				}
 
@@ -96,14 +119,14 @@ namespace Frog_Feed_Order
 			while (time < duration)
 			{
 				lerpedVector = Vector3.Lerp(startPosition, targetPosition, time / duration);
-				tongueTr.position = lerpedVector;
+				tongueTr.position = new Vector3(lerpedVector.x, tongueTr.position.y, lerpedVector.z);
 				lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
 				time += Time.deltaTime;
 				yield return null;
 			}
 
 			lerpedVector = targetPosition;
-			tongueTr.position = lerpedVector;
+			tongueTr.position = new Vector3(lerpedVector.x, tongueTr.position.y, lerpedVector.z); ;
 
 			// if (index >= 0 && index <= lineRenderer.positionCount)
 			// lineRenderer.SetPosition(index, new Vector3(lerpedVector.x, lineHeight, lerpedVector.z));
